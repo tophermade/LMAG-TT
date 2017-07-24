@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,14 +18,29 @@ public class CubeBase : MonoBehaviour {
 
 	void MoveIndicator(){
 		if(Time.time > lastIndicatorTime + jumpTime){
-			indicatorActual.transform.position = mountPoints[Random.Range(0, mountPoints.Length)].transform.position;
+			indicatorActual.transform.position = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform.position;
 			lastIndicatorTime = Time.time;
 		}
 	}
 
+	void PruneLowHangingFruit(){
+		GameObject[] tempMountPoints = new GameObject[mountPoints.Length];
+		int tempMountCount = 0;
+		foreach(GameObject mountPoint in mountPoints){
+			if(mountPoint.transform.position.y > -.02f){
+				tempMountPoints[tempMountCount] = mountPoint;
+				tempMountCount++;
+			}
+		}
+		Array.Resize(ref tempMountPoints, tempMountCount);
+		mountPoints = tempMountPoints;
+		Debug.Log(tempMountPoints.Length);
+	}
+
 
 	void SetupCube(){
-		Transform tempMount = mountPoints[Random.Range(0, mountPoints.Length)].transform;
+		PruneLowHangingFruit();
+		Transform tempMount = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform;
 		indicatorActual = GameObject.Find("Indicator");
 		indicatorActual.transform.parent = tempMount;
 		lastIndicatorTime = Time.time;

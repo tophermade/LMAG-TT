@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Lumbergh : MonoBehaviour {
 
-
-	public GameObject cube;
+	public GameObject[] cubes;
 	public GameObject cubeParent;
 
 
@@ -17,7 +16,7 @@ public class Lumbergh : MonoBehaviour {
 		currentActiveCube.GetComponent<CubeBase>().canHaveIndicator = false;
 
 		GameObject tempIndicator = GameObject.Find("Indicator");
-		GameObject newCube = Instantiate(cube, tempIndicator.transform.position, Quaternion.identity);
+		GameObject newCube = Instantiate(cubes[Random.Range(0, cubes.Length)], tempIndicator.transform.position, Quaternion.identity);
 		newCube.transform.parent = cubeParent.transform;
 		currentActiveCube = newCube;
 		//Debug.Log(tempIndicator.transform.position);
