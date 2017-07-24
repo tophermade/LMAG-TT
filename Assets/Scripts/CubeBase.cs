@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class CubeBase : MonoBehaviour {
 
-	public GameObject indicator;
 	private GameObject indicatorActual;
 	public GameObject baseObject;
 	public GameObject[] mountPoints;
 
 
 	public float jumpTime = .8f;
+	public float lastIndicatorTime = 0f;
 
+
+	public bool canHaveIndicator = true;
+
+	void MoveIndicator(){
+		if(Time.time > lastIndicatorTime + jumpTime){
+			indicatorActual.transform.position = mountPoints[Random.Range(0, mountPoints.Length)].transform.position;
+			lastIndicatorTime = Time.time;
+		}
+	}
 
 
 	void SetupCube(){
 		Transform tempMount = mountPoints[Random.Range(0, mountPoints.Length)].transform;
-		indicatorActual = Instantiate(indicator, tempMount.position,Quaternion.identity);
+		indicatorActual = GameObject.Find("Indicator");
 		indicatorActual.transform.parent = tempMount;
+		lastIndicatorTime = Time.time;
 	}
 
 
@@ -28,6 +38,8 @@ public class CubeBase : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(canHaveIndicator){
+			MoveIndicator();
+		}
 	}
 }

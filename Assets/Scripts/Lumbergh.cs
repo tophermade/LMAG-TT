@@ -9,16 +9,23 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject cubeParent;
 
 
+	public GameObject currentActiveCube;
+
+
 
 	void BlockSpawn(){
-		GameObject tempIndicator = GameObject.Find("Indicator(Clone)");
+		currentActiveCube.GetComponent<CubeBase>().canHaveIndicator = false;
+
+		GameObject tempIndicator = GameObject.Find("Indicator");
 		GameObject newCube = Instantiate(cube, tempIndicator.transform.position, Quaternion.identity);
 		newCube.transform.parent = cubeParent.transform;
+		currentActiveCube = newCube;
 		//Debug.Log(tempIndicator.transform.position);
 	}
 	
 
 	void SetupWorld(){
+		currentActiveCube = GameObject.Find("StarterCube");
 	}
 
 
