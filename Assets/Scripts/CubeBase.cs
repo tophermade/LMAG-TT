@@ -34,7 +34,7 @@ public class CubeBase : MonoBehaviour {
 		}
 		Array.Resize(ref tempMountPoints, tempMountCount);
 		mountPoints = tempMountPoints;
-		Debug.Log(tempMountPoints.Length);
+		//Debug.Log(tempMountPoints.Length);
 	}
 
 

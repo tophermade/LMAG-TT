@@ -26,6 +26,11 @@ public class Lumbergh : MonoBehaviour {
 	void SetupWorld(){
 		currentActiveCube = GameObject.Find("StarterCube");
 	}
+	
+
+	public void EndRound(){
+		Debug.Log("Round Ended");
+	}
 
 
 	// Use this for initialization
