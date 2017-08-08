@@ -23,9 +23,27 @@ public class CubeBase : MonoBehaviour {
 		}
 	}
 
+
+	void CheckAvailablePositions(){
+		GameObject[] tempMountPoints = new GameObject[mountPoints.Length];
+		int tempMountCount = 0;
+
+		foreach(GameObject mountPoint in mountPoints){
+			if (!Physics.Linecast(transform.position, mountPoint.transform.position)){
+				tempMountPoints[tempMountCount] = mountPoint;
+				tempMountCount++;
+			}            
+		}
+
+		Array.Resize(ref tempMountPoints, tempMountCount);
+		mountPoints = tempMountPoints;
+	}
+
+
 	void PruneLowHangingFruit(){
 		GameObject[] tempMountPoints = new GameObject[mountPoints.Length];
 		int tempMountCount = 0;
+
 		foreach(GameObject mountPoint in mountPoints){
 			if(mountPoint.transform.position.y > -.02f){
 				tempMountPoints[tempMountCount] = mountPoint;
@@ -34,16 +52,20 @@ public class CubeBase : MonoBehaviour {
 		}
 		Array.Resize(ref tempMountPoints, tempMountCount);
 		mountPoints = tempMountPoints;
-		//Debug.Log(tempMountPoints.Length);
 	}
 
 
 	void SetupCube(){
 		PruneLowHangingFruit();
-		Transform tempMount = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform;
-		indicatorActual = GameObject.Find("Indicator");
-		indicatorActual.transform.parent = tempMount;
-		lastIndicatorTime = Time.time;
+		CheckAvailablePositions();
+		if(mountPoints.Length > 0){
+			Transform tempMount = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform;
+			indicatorActual = GameObject.Find("Indicator");
+			indicatorActual.transform.parent = tempMount;
+			lastIndicatorTime = Time.time;
+		} else {
+			canHaveIndicator = false;
+		}
 	}
 
 

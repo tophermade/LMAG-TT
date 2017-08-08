@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 5d5a49f1e12a2d74db3e79adec095d7d
+timeCreated: 1501098712
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 90
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: TikiIsland
+  fontNames:
+  - TikiIsland
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
