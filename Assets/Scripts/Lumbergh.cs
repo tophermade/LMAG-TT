@@ -8,12 +8,13 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject cubeParent;
 	public GameObject mainCam;
 	public GameObject indicator;
+	public GameObject cameraSpike;
 
 
 	public GameObject currentActiveCube;
 
 
-	public Vector3 trackerVector = new Vector3(0,3,-11.5f);
+	public Vector3 trackerVector = new Vector3(0,0,0);
 
 
 	public void InitiateNewRound(){
@@ -24,7 +25,7 @@ public class Lumbergh : MonoBehaviour {
 
 
 	void UpdateCameraPosition(){
-		//mainCam.transform.position = Vector3.Lerp(mainCam.transform.position, trackerVector, Time.deltaTime * 2.5f);
+		cameraSpike.transform.position = Vector3.Lerp(cameraSpike.transform.position, trackerVector, Time.deltaTime * 2.5f);
 		mainCam.transform.RotateAround(Vector3.zero, Vector3.up, 12f * Time.deltaTime);
 	}
 
@@ -36,7 +37,7 @@ public class Lumbergh : MonoBehaviour {
 		currentActiveCube = newCube;
 		newCube.transform.rotation = cubeParent.transform.rotation;
 		if(newCube.transform.position.y > trackerVector.y){
-			trackerVector = mainCam.transform.position;
+			trackerVector = cameraSpike.transform.position;
 			trackerVector.y = newCube.transform.position.y + 1f;
 		}
 		indicator.SetActive(false);
