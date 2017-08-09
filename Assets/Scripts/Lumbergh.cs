@@ -7,20 +7,19 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject[] cubes;
 	public GameObject cubeParent;
 	public GameObject mainCam;
+	public GameObject indicator;
 
 
 	public GameObject currentActiveCube;
 
 
-	public Vector3 trackerVector = new Vector3(0,2.96f,-9.28f);
+	public Vector3 trackerVector = new Vector3(0,3,-11.5f);
 
 
 	public void InitiateNewRound(){
-
 	}
 
 	public void InitiateRoundRestart(){
-
 	}
 
 
@@ -32,8 +31,7 @@ public class Lumbergh : MonoBehaviour {
 
 	void BlockSpawn(){
 		currentActiveCube.GetComponent<CubeBase>().canHaveIndicator = false;
-		GameObject tempIndicator = GameObject.Find("Indicator");
-		GameObject newCube = Instantiate(cubes[Random.Range(0, cubes.Length)], tempIndicator.transform.position, Quaternion.identity);
+		GameObject newCube = Instantiate(cubes[Random.Range(0, cubes.Length)], indicator.transform.position, Quaternion.identity);
 		newCube.transform.parent = cubeParent.transform;
 		currentActiveCube = newCube;
 		newCube.transform.rotation = cubeParent.transform.rotation;
@@ -41,6 +39,7 @@ public class Lumbergh : MonoBehaviour {
 			trackerVector = mainCam.transform.position;
 			trackerVector.y = newCube.transform.position.y + 1f;
 		}
+		indicator.SetActive(false);
 		//Debug.Log(tempIndicator.transform.position);
 	}
 	
@@ -52,6 +51,7 @@ public class Lumbergh : MonoBehaviour {
 
 	public void EndRound(){
 		Debug.Log("Round Ended");
+		indicator.SetActive(false);
 	}
 	
 

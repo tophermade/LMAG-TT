@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeBase : MonoBehaviour {
-
+	
+	public GameObject lumbergh;
 	private GameObject indicatorActual;
 	public GameObject baseObject;
 	public GameObject[] mountPoints;
@@ -15,6 +16,7 @@ public class CubeBase : MonoBehaviour {
 
 
 	public bool canHaveIndicator = true;
+
 
 	void MoveIndicator(){
 		if(Time.time > lastIndicatorTime + jumpTime){
@@ -60,8 +62,12 @@ public class CubeBase : MonoBehaviour {
 		CheckAvailablePositions();
 		if(mountPoints.Length > 0){
 			Transform tempMount = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform;
-			indicatorActual = GameObject.Find("Indicator");
+			lumbergh = GameObject.Find("Lumbergh");
+			indicatorActual = lumbergh.GetComponent<Lumbergh>().indicator;
+			indicatorActual.transform.position = tempMount.position;
 			indicatorActual.transform.parent = tempMount;
+			//StartCoroutine(EnableIndicator());
+			indicatorActual.SetActive(true);
 			lastIndicatorTime = Time.time;
 		} else {
 			canHaveIndicator = false;
@@ -69,10 +75,17 @@ public class CubeBase : MonoBehaviour {
 	}
 
 
+	IEnumerator EnableIndicator(){
+		yield return new WaitForSeconds(.25f);
+		indicatorActual.SetActive(true);
+	}
+
+
 	// Use this for initialization
 	void Start () {
 		SetupCube();
 	}
+
 	
 	// Update is called once per frame
 	void Update () {
