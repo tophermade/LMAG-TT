@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeBase : MonoBehaviour {
-	
+
 	public GameObject lumbergh;
 	private GameObject indicatorActual;
 	public GameObject baseObject;
@@ -13,14 +13,26 @@ public class CubeBase : MonoBehaviour {
 
 	public float jumpTime = .8f;
 	public float lastIndicatorTime = 0f;
+	public int currentIndicator = -1;
 
 
 	public bool canHaveIndicator = true;
 
 
+	int GetNewMount(int notThis){
+		int newDir;
+		newDir = UnityEngine.Random.Range(0,mountPoints.Length);
+		while (newDir == notThis){
+			newDir = UnityEngine.Random.Range(0,mountPoints.Length);
+		}
+		return newDir;
+	}
+
+
 	void MoveIndicator(){
 		if(Time.time > lastIndicatorTime + jumpTime){
-			indicatorActual.transform.position = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform.position;
+			currentIndicator = GetNewMount(currentIndicator);
+			indicatorActual.transform.position = mountPoints[currentIndicator].transform.position;
 			lastIndicatorTime = Time.time;
 		}
 	}
@@ -61,7 +73,8 @@ public class CubeBase : MonoBehaviour {
 		PruneLowHangingFruit();
 		CheckAvailablePositions();
 		if(mountPoints.Length > 0){
-			Transform tempMount = mountPoints[UnityEngine.Random.Range(0, mountPoints.Length)].transform;
+			currentIndicator = GetNewMount(currentIndicator);
+			Transform tempMount = mountPoints[currentIndicator].transform;
 			lumbergh = GameObject.Find("Lumbergh");
 			indicatorActual = lumbergh.GetComponent<Lumbergh>().indicator;
 			indicatorActual.transform.position = tempMount.position;
