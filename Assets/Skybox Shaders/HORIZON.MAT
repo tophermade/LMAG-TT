@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Horizon
+  m_Name: HORIZON
   m_Shader: {fileID: 4800000, guid: 1b1032babd6d64921a50506aa07cf3b2, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5

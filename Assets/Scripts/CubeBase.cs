@@ -73,6 +73,7 @@ public class CubeBase : MonoBehaviour {
 		PruneLowHangingFruit();
 		CheckAvailablePositions();
 		if(mountPoints.Length > 0){
+			canHaveIndicator = true;
 			currentIndicator = GetNewMount(currentIndicator);
 			Transform tempMount = mountPoints[currentIndicator].transform;
 			lumbergh = GameObject.Find("Lumbergh");
@@ -96,7 +97,11 @@ public class CubeBase : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		SetupCube();
+		if(gameObject.name != "StarterCube"){
+			SetupCube();
+		} else {
+			canHaveIndicator = false;
+		}
 	}
 
 	

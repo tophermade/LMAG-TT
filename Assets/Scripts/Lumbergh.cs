@@ -1,21 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 
 public class Lumbergh : MonoBehaviour {
 
+	[Header ("Scene Object Refernces")]
 	public GameObject[] cubes;
 	public GameObject cubeParent;
+	public GameObject starterCube;
 	public GameObject mainCam;
 	public GameObject indicator;
 	public GameObject cameraSpike;
 
 
+	[Header ("Instantiated References")]
 	public GameObject currentActiveCube;
 
 
-	public Vector3 trackerVector = new Vector3(0,0,0);
+	[Header ("Component References")]
+	public AudioSource audioSource;
+	public PostProcessingProfile roundOverProfile;
+	public PostProcessingProfile roundActiveProfile;
 
+
+	[Header ("Sound Effects")]
+	public AudioClip placeBlock;
+
+
+	[Header ("Vectors")]
+	public Vector3 trackerVectorStart = new Vector3(0,0,0);
+	public Vector3 trackerVector = new Vector3(0,3.96f,7f);
+
+
+	[Header ("Booleans")]
+	public bool playing = false;
 
 	public void InitiateNewRound(){
 	}
@@ -25,7 +44,9 @@ public class Lumbergh : MonoBehaviour {
 
 
 	void UpdateCameraPosition(){
-		cameraSpike.transform.position = Vector3.Lerp(cameraSpike.transform.position, trackerVector, Time.deltaTime * 2.5f);
+		if(playing){
+			cameraSpike.transform.position = Vector3.Lerp(cameraSpike.transform.position, trackerVector, Time.deltaTime * 2.5f);
+		}
 		mainCam.transform.RotateAround(Vector3.zero, Vector3.up, 12f * Time.deltaTime);
 	}
 
@@ -41,18 +62,34 @@ public class Lumbergh : MonoBehaviour {
 			trackerVector.y = newCube.transform.position.y + 1f;
 		}
 		indicator.SetActive(false);
+		audioSource.PlayOneShot(placeBlock, 1F);
+		BroadcastMessage("TinyShake");
 		//Debug.Log(tempIndicator.transform.position);
 	}
 	
 
 	void SetupWorld(){
 		currentActiveCube = GameObject.Find("StarterCube");
+		indicator.SetActive(false);
 	}
 
 
 	public void EndRound(){
 		Debug.Log("Round Ended");
 		indicator.SetActive(false);
+	}
+
+
+
+
+	// button triggered functions
+	public void RequestFirstStart(){
+		starterCube.SendMessage("SetupCube");
+		StartRound();
+	}
+
+	public void StartRound(){
+		playing = true;
 	}
 	
 
@@ -64,8 +101,10 @@ public class Lumbergh : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetMouseButtonDown(0)){
-			BlockSpawn();
+		if(playing){
+			if(Input.GetMouseButtonDown(0)){
+				BlockSpawn();
+			}
 		}
 
 		UpdateCameraPosition();
