@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 92c880342dba3024a85a33b46fe22daa
+timeCreated: 1502352451
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Tondu
+  fontNames:
+  - Tondu
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

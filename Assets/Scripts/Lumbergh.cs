@@ -30,11 +30,12 @@ public class Lumbergh : MonoBehaviour {
 
 	[Header ("Vectors")]
 	public Vector3 trackerVectorStart = new Vector3(0,0,0);
-	public Vector3 trackerVector = new Vector3(0,3.96f,7f);
+	public Vector3 trackerVector = new Vector3(0,3.96f,-7f);
 
 
 	[Header ("Booleans")]
 	public bool playing = false;
+	
 
 	public void InitiateNewRound(){
 	}
@@ -45,9 +46,16 @@ public class Lumbergh : MonoBehaviour {
 
 	void UpdateCameraPosition(){
 		if(playing){
-			cameraSpike.transform.position = Vector3.Lerp(cameraSpike.transform.position, trackerVector, Time.deltaTime * 2.5f);
-		}
-		mainCam.transform.RotateAround(Vector3.zero, Vector3.up, 12f * Time.deltaTime);
+			Vector3 tempVector = cameraSpike.transform.position;
+			tempVector.y = Vector3.Lerp(cameraSpike.transform.position, trackerVector, Time.deltaTime * 2.5f).y;
+			cameraSpike.transform.position = tempVector;			
+			mainCam.transform.RotateAround(Vector3.zero, Vector3.up, 12f * Time.deltaTime);
+
+			cameraSpike.transform.localScale = Vector3.Lerp(cameraSpike.transform.localScale, new Vector3(2,2,2), Time.deltaTime * 2.5f);
+		} else {
+			mainCam.transform.RotateAround(Vector3.zero, Vector3.up, 12f * Time.deltaTime);
+			cameraSpike.transform.localScale = Vector3.Lerp(cameraSpike.transform.localScale, new Vector3(1,1,1), Time.deltaTime * 1.5f);
+		}		
 	}
 
 
@@ -78,7 +86,6 @@ public class Lumbergh : MonoBehaviour {
 		Debug.Log("Round Ended");
 		indicator.SetActive(false);
 	}
-
 
 
 
