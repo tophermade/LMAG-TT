@@ -14,6 +14,12 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject cameraSpike;
 
 
+	[Header ("Menu Panels")]
+	public GameObject mainMenuPanel;
+	public GameObject playPanel;
+	public GameObject gameOverPanel;
+
+
 	[Header ("Instantiated References")]
 	public GameObject currentActiveCube;
 
@@ -22,6 +28,10 @@ public class Lumbergh : MonoBehaviour {
 	public AudioSource audioSource;
 	public PostProcessingProfile roundOverProfile;
 	public PostProcessingProfile roundActiveProfile;
+
+	public Animator mainMenuPanelAnimator;
+	public Animator playPanelAnimator;
+	public Animator gameOverPanelAnimator;
 
 
 	[Header ("Sound Effects")]
@@ -85,6 +95,12 @@ public class Lumbergh : MonoBehaviour {
 	public void EndRound(){
 		Debug.Log("Round Ended");
 		indicator.SetActive(false);
+
+		playPanel.SetActive(false);
+
+		gameOverPanel.SetActive(true);
+		gameOverPanel.BroadcastMessage("PlayEnabledAnimation");
+		gameOverPanelAnimator.SetTrigger("In");
 	}
 
 
@@ -97,6 +113,16 @@ public class Lumbergh : MonoBehaviour {
 
 	public void StartRound(){
 		playing = true;
+
+		mainMenuPanelAnimator.SetTrigger("Out");
+		playPanel.SetActive(true);
+		playPanelAnimator.SetTrigger("In");
+	}
+
+	public void PlaceBlock(){
+		if(playing){
+			BlockSpawn();
+		}
 	}
 	
 
@@ -108,12 +134,6 @@ public class Lumbergh : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(playing){
-			if(Input.GetMouseButtonDown(0)){
-				BlockSpawn();
-			}
-		}
-
 		UpdateCameraPosition();
 	}	
 }
