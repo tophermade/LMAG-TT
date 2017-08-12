@@ -16,7 +16,7 @@ public class CamShaker : MonoBehaviour
     public void DoShake() 
     {
 
-        shakeAmt = .05f;
+        shakeAmt = .1f;
         InvokeRepeating("CameraShake", 0, .01f);
         Invoke("StopShaking", 0.3f);
 

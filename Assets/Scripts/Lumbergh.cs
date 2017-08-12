@@ -36,9 +36,11 @@ public class Lumbergh : MonoBehaviour {
 
 	[Header ("Sound Effects")]
 	public AudioClip placeBlock;
+	public AudioClip buttonTap;
 
 
 	[Header ("Vectors")]
+	public Vector3 initialBasePosition;
 	public Vector3 trackerVectorStart = new Vector3(0,0,0);
 	public Vector3 trackerVector = new Vector3(0,3.96f,-7f);
 
@@ -94,13 +96,34 @@ public class Lumbergh : MonoBehaviour {
 
 	public void EndRound(){
 		Debug.Log("Round Ended");
+		BroadcastMessage("DoShake");
+
 		indicator.SetActive(false);
+		playing = false;
+		StartCoroutine(ShowGameOverScreen());
+		StartCoroutine(SetupForNextRound());
+		//gameOverPanelAnimator.SetTrigger("In");
+	}
 
+	IEnumerator ShowGameOverScreen(){
+		yield return new WaitForSeconds(.7f);
 		playPanel.SetActive(false);
-
 		gameOverPanel.SetActive(true);
-		gameOverPanel.BroadcastMessage("PlayEnabledAnimation");
-		gameOverPanelAnimator.SetTrigger("In");
+	}
+
+	IEnumerator SetupForNextRound(){
+		yield return new WaitForSeconds(.95f);
+		starterCube.transform.position = initialBasePosition;
+		starterCube.transform.eulerAngles = new Vector3(0,0,0);
+		foreach(Transform cube in cubeParent.transform){
+			Destroy(cube.gameObject);
+		}
+	}
+
+
+	public void RestartRound(){
+		mainMenuPanel.SetActive(false);
+		StartRound();
 	}
 
 
@@ -114,6 +137,8 @@ public class Lumbergh : MonoBehaviour {
 	public void StartRound(){
 		playing = true;
 
+		gameOverPanel.SetActive(false);
+
 		mainMenuPanelAnimator.SetTrigger("Out");
 		playPanel.SetActive(true);
 		playPanelAnimator.SetTrigger("In");
@@ -124,10 +149,21 @@ public class Lumbergh : MonoBehaviour {
 			BlockSpawn();
 		}
 	}
+
+	
+
+	// sound functions
+	public void PlayButtonSound(){
+		audioSource.PlayOneShot(placeBlock, 1F);
+	}
 	
 
 
 	// Use this for initialization
+	void Awake(){
+		initialBasePosition = starterCube.transform.position;
+	}
+
 	void Start () {
 		SetupWorld();
 	}
