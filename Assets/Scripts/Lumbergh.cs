@@ -102,6 +102,7 @@ public class Lumbergh : MonoBehaviour {
 		playing = false;
 		StartCoroutine(ShowGameOverScreen());
 		StartCoroutine(SetupForNextRound());
+		StartCoroutine(DestroyCubes());
 		//gameOverPanelAnimator.SetTrigger("In");
 	}
 
@@ -113,8 +114,18 @@ public class Lumbergh : MonoBehaviour {
 
 	IEnumerator SetupForNextRound(){
 		yield return new WaitForSeconds(.95f);
+		
 		starterCube.transform.position = initialBasePosition;
 		starterCube.transform.eulerAngles = new Vector3(0,0,0);
+		starterCube.GetComponent<CubeBase>().Reset();
+		currentActiveCube = starterCube;
+		
+		indicator.transform.parent = null;
+		indicator.transform.position = new Vector3(0,1.24f,0);		
+	}
+
+	IEnumerator DestroyCubes(){
+		yield return new WaitForSeconds(.95f);
 		foreach(Transform cube in cubeParent.transform){
 			Destroy(cube.gameObject);
 		}
@@ -123,6 +134,7 @@ public class Lumbergh : MonoBehaviour {
 
 	public void RestartRound(){
 		mainMenuPanel.SetActive(false);
+		indicator.SetActive(true);
 		StartRound();
 	}
 

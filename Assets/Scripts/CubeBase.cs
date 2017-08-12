@@ -94,6 +94,10 @@ public class CubeBase : MonoBehaviour {
 		indicatorActual.SetActive(true);
 	}
 
+	public void Reset(){
+		canHaveIndicator = true;
+	}
+
 
 	// Use this for initialization
 	void Start () {
