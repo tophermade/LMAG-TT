@@ -18,6 +18,7 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject mainMenuPanel;
 	public GameObject playPanel;
 	public GameObject gameOverPanel;
+	public GameObject shopPanel;
 
 
 	[Header ("Instantiated References")]
@@ -32,6 +33,7 @@ public class Lumbergh : MonoBehaviour {
 	public Animator mainMenuPanelAnimator;
 	public Animator playPanelAnimator;
 	public Animator gameOverPanelAnimator;
+	public Animator shopPanelAnimator;
 
 
 	[Header ("Sound Effects")]
@@ -72,19 +74,21 @@ public class Lumbergh : MonoBehaviour {
 
 
 	void BlockSpawn(){
-		currentActiveCube.GetComponent<CubeBase>().canHaveIndicator = false;
-		GameObject newCube = Instantiate(cubes[Random.Range(0, cubes.Length)], indicator.transform.position, Quaternion.identity);
-		newCube.transform.parent = cubeParent.transform;
-		currentActiveCube = newCube;
-		newCube.transform.rotation = cubeParent.transform.rotation;
-		if(newCube.transform.position.y > trackerVector.y){
-			trackerVector = cameraSpike.transform.position;
-			trackerVector.y = newCube.transform.position.y + 1f;
+		if(currentActiveCube != null){
+			currentActiveCube.GetComponent<CubeBase>().canHaveIndicator = false;
+			GameObject newCube = Instantiate(cubes[Random.Range(0, cubes.Length)], indicator.transform.position, Quaternion.identity);
+			newCube.transform.parent = cubeParent.transform;
+			currentActiveCube = newCube;
+			newCube.transform.rotation = cubeParent.transform.rotation;
+			if(newCube.transform.position.y > trackerVector.y){
+				trackerVector = cameraSpike.transform.position;
+				trackerVector.y = newCube.transform.position.y + 1f;
+			}
+			indicator.SetActive(false);
+			audioSource.PlayOneShot(placeBlock, 1F);
+			BroadcastMessage("TinyShake");
+			//Debug.Log(tempIndicator.transform.position);
 		}
-		indicator.SetActive(false);
-		audioSource.PlayOneShot(placeBlock, 1F);
-		BroadcastMessage("TinyShake");
-		//Debug.Log(tempIndicator.transform.position);
 	}
 	
 
@@ -100,9 +104,24 @@ public class Lumbergh : MonoBehaviour {
 
 		indicator.SetActive(false);
 		playing = false;
-		StartCoroutine(ShowGameOverScreen());
-		StartCoroutine(SetupForNextRound());
-		StartCoroutine(DestroyCubes());
+		
+		//StartCoroutine(ShowGameOverScreen());
+		playPanel.SetActive(false);
+		gameOverPanel.SetActive(true);
+
+		//StartCoroutine(SetupForNextRound());		
+		starterCube.transform.position = initialBasePosition;
+		starterCube.transform.eulerAngles = new Vector3(0,0,0);
+		starterCube.GetComponent<CubeBase>().Reset();
+		currentActiveCube = starterCube;		
+		indicator.transform.parent = null;
+		indicator.transform.position = new Vector3(0,1.24f,0);
+
+		//StartCoroutine(DestroyCubes());
+		foreach(Transform cube in cubeParent.transform){
+			Destroy(cube.gameObject);
+		}
+
 		//gameOverPanelAnimator.SetTrigger("In");
 	}
 
@@ -110,10 +129,11 @@ public class Lumbergh : MonoBehaviour {
 		yield return new WaitForSeconds(.7f);
 		playPanel.SetActive(false);
 		gameOverPanel.SetActive(true);
+		//gameOverPanelAnimator.SetTrigger("In");
 	}
 
 	IEnumerator SetupForNextRound(){
-		yield return new WaitForSeconds(.95f);
+		yield return new WaitForSeconds(.7f);
 		
 		starterCube.transform.position = initialBasePosition;
 		starterCube.transform.eulerAngles = new Vector3(0,0,0);
@@ -125,7 +145,7 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 	IEnumerator DestroyCubes(){
-		yield return new WaitForSeconds(.95f);
+		yield return new WaitForSeconds(.7f);
 		foreach(Transform cube in cubeParent.transform){
 			Destroy(cube.gameObject);
 		}
@@ -147,13 +167,49 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 	public void StartRound(){
-		playing = true;
-
+		//gameOverPanelAnimator.SetTrigger("Out");
 		gameOverPanel.SetActive(false);
 
-		mainMenuPanelAnimator.SetTrigger("Out");
+		if(mainMenuPanel.activeSelf){
+			mainMenuPanelAnimator.SetTrigger("Out");
+		}
+		
 		playPanel.SetActive(true);
 		playPanelAnimator.SetTrigger("In");
+
+		playing = true;
+	}
+
+	public void ShowShop(){
+		shopPanel.SetActive(true);
+		
+		if(mainMenuPanel.activeSelf){
+			mainMenuPanelAnimator.SetTrigger("Out");
+			StartCoroutine(DisablePanel(mainMenuPanel, .5f));
+		}
+		if(playPanel.activeSelf){
+			playPanelAnimator.SetTrigger("Out");
+			StartCoroutine(DisablePanel(playPanel, .5f));
+		}
+		if(gameOverPanel.activeSelf){
+			gameOverPanelAnimator.SetTrigger("Out");
+			StartCoroutine(DisablePanel(gameOverPanel, .5f));			
+		}
+
+		shopPanelAnimator.SetTrigger("In");
+	}
+
+	public void HideShop(){
+		mainMenuPanel.SetActive(true);
+		DisablePanel(shopPanel, .5f);		
+		
+		shopPanelAnimator.SetTrigger("Out");
+		mainMenuPanelAnimator.SetTrigger("In");
+	}
+
+	IEnumerator DisablePanel(GameObject panel, float delay){
+		yield return new WaitForSeconds(delay);
+		panel.SetActive(false);
 	}
 
 	public void PlaceBlock(){
