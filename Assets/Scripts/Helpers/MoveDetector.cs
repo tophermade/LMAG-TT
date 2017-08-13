@@ -8,7 +8,6 @@ public class MoveDetector : MonoBehaviour {
 
 	void OnTriggerEnter(){
 		Debug.Log("Totem Fell");
-		lumbergh.GetComponent<Lumbergh>().EndRound();
 	}
 
 	// Use this for initialization
