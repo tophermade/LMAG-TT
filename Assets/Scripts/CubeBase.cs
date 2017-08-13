@@ -4,5 +4,86 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeBase : MonoBehaviour {
+
+	[Header ("Scene Object References")]
+	public GameObject lumbergh;
+	public GameObject baseCube;
+	public GameObject[] mountPoints;
+
+	[Header ("Component References")]
+	public Lumbergh manager;
+
+
+	[Header ("integers")]
+	public int currentMount = -1;
+
+
+	void Awake(){
+		if(gameObject.name != "StarterCube"){
+			lumbergh = GameObject.Find("Lumbergh");
+		}
+
+		manager = lumbergh.GetComponent<Lumbergh>();
+	}
+
+	void Start(){
+		manager.currentCube = gameObject;
+	}
+
+	void CheckAvailablePositions(){
+		GameObject[] tempMountPoints = new GameObject[mountPoints.Length];
+		int tempMountCount = 0;
+
+		foreach(GameObject mountPoint in mountPoints){
+			if (!Physics.Linecast(transform.position, mountPoint.transform.position)){
+				tempMountPoints[tempMountCount] = mountPoint;
+				tempMountCount++;
+			}            
+		}
+
+		Array.Resize(ref tempMountPoints, tempMountCount);
+		mountPoints = tempMountPoints;
+	}
+
+
+	void PruneLowHangingFruit(){
+		GameObject[] tempMountPoints = new GameObject[mountPoints.Length];
+		int tempMountCount = 0;
+
+		foreach(GameObject mountPoint in mountPoints){
+			if(mountPoint.transform.position.y > -.02f){
+				tempMountPoints[tempMountCount] = mountPoint;
+				tempMountCount++;
+			}
+		}
+		Array.Resize(ref tempMountPoints, tempMountCount);
+		mountPoints = tempMountPoints;
+	}
+
+
+	int GetNewMount(int notThis){
+		int newDir;
+		newDir = UnityEngine.Random.Range(0,mountPoints.Length);
+		while (newDir == notThis){
+			newDir = UnityEngine.Random.Range(0,mountPoints.Length);
+		}
+		return newDir;
+	}
+
+
+	void MoveIndicator(){
+		if(manager.playing && Time.time >  manager.lastIndicatorMoveTime + manager.indicatorMoveDelay){
+			currentMount = GetNewMount(currentMount);
+			manager.indicator.transform.position = mountPoints[currentMount].transform.position;
+			manager.lastIndicatorMoveTime = Time.time;
+		}
+	}
+
 	
+	void Update(){
+		MoveIndicator();
+	}
+
+
+
 }
