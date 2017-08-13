@@ -28,6 +28,8 @@ public class CubeBase : MonoBehaviour {
 
 	void Start(){
 		manager.currentCube = gameObject;
+		CheckAvailablePositions();
+		PruneLowHangingFruit();
 	}
 
 	void CheckAvailablePositions(){
@@ -75,6 +77,7 @@ public class CubeBase : MonoBehaviour {
 		if(manager.playing && Time.time >  manager.lastIndicatorMoveTime + manager.indicatorMoveDelay){
 			currentMount = GetNewMount(currentMount);
 			manager.indicator.transform.position = mountPoints[currentMount].transform.position;
+			manager.indicator.transform.parent = mountPoints[currentMount].transform;
 			manager.lastIndicatorMoveTime = Time.time;
 		}
 	}
