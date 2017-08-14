@@ -87,6 +87,13 @@ public class CubeBase : MonoBehaviour {
 		}
 	}
 
+
+	void OnCollisionEnter(Collision other){
+		if(other.transform.name == "Island"){
+			Debug.Log("Emmit island collision sound");
+		}
+	}
+
 	
 	void Update(){
 		MoveIndicator();
