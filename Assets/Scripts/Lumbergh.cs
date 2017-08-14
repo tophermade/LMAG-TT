@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
+using UnityEngine.UI;
 
 public class Lumbergh : MonoBehaviour {
 
@@ -27,6 +28,13 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject shopPanel;
 
 
+	[Header ("UI Text References")]
+	public GameObject mainScoreDisplay;
+	public GameObject mainCoinDisplay;
+	public GameObject buttonCoinDisplay;
+	public GameObject shopCoinDisplay;
+
+
 	[Header ("Audio Clips")]
 	public AudioClip placeblock;
 	public AudioClip clickButton;
@@ -44,9 +52,15 @@ public class Lumbergh : MonoBehaviour {
 	public Vector3 trackerVector = new Vector3(0,3.96f,-7f);
 
 
+	[Header ("Integers")]
+	public int score = 0;
+	public int coins;
+
+
 	[Header ("Floats")]
 	public float indicatorMoveDelay = .75f;
 	public float lastIndicatorMoveTime = 0f;
+	
 
 	[Header ("Strings")]
 	public string activePanelName = "MainMenu";
@@ -54,7 +68,24 @@ public class Lumbergh : MonoBehaviour {
 
 
 	void Start(){
+		EstablishCoinCount();
+	}
 
+	void EstablishCoinCount(){
+		if(PlayerPrefs.HasKey("firstRun")){
+			if(PlayerPrefs.HasKey("coins")){
+				coins  = PlayerPrefs.GetInt("coins");
+			} else {
+				coins = 0;
+			}
+		} else {
+			coins = 25;
+			PlayerPrefs.SetInt("firstRun",0);
+		}
+		
+		mainCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
 	}
 
 	void ShowShop(){
@@ -138,11 +169,11 @@ public class Lumbergh : MonoBehaviour {
 	void StartNewRound(){
 		playing = true;
 		indicator.SetActive(true);
+		ResetScore();
 	}
 
 	void PlaceNewCube(){
 		Debug.Log("Placing new cube");
-		
 		audioSource.PlayOneShot(placeblock, .6f);
 
 		currentCube.GetComponent<CubeBase>().cubeIsActive = false;
@@ -156,6 +187,43 @@ public class Lumbergh : MonoBehaviour {
 		Vector3 tempVector = trackerVector;
 		tempVector.y = currentCube.transform.position.y + 2.5f;
 		trackerVector = tempVector;
+		IncreaseScore(1);
+		IncreaseCoins(1);
+	}
+	
+	void IncreaseScore(int addAmount){
+		score = score + addAmount;
+		mainScoreDisplay.GetComponent<Text>().text = score.ToString("D3");
+	}
+
+	void ResetScore(){
+		score = 0;
+		mainScoreDisplay.GetComponent<Text>().text = score.ToString("D3");
+	}
+
+	void IncreaseCoins(int addAmount){
+		coins = coins + addAmount;
+		mainCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D3");
+		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		PlayerPrefs.SetInt("coins", coins);
+	}
+
+	void SpendCoins(int spendAmount){
+		coins = coins - spendAmount;
+		mainCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D3");
+		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
+		PlayerPrefs.SetInt("coins", coins);
+	}
+
+	public void MakePurchase(GameObject buyButton){
+		BuyButton buyingFrom = buyButton.GetComponent<BuyButton>();
+		if(coins >= buyingFrom.itemCost){
+			SpendCoins(buyingFrom.itemCost);
+			PlayerPrefs.SetInt(buyingFrom.itemName, 1);
+			buyingFrom.Unlock();
+		}
 	}
 	
 
