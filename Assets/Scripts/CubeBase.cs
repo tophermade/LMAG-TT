@@ -14,6 +14,10 @@ public class CubeBase : MonoBehaviour {
 	public Lumbergh manager;
 
 
+	[Header ("Booleans")]
+	public bool cubeIsActive = false;
+
+
 	[Header ("integers")]
 	public int currentMount = -1;
 
@@ -21,13 +25,14 @@ public class CubeBase : MonoBehaviour {
 	void Awake(){
 		if(gameObject.name != "StarterCube"){
 			lumbergh = GameObject.Find("Lumbergh");
+			baseCube = GameObject.Find("StarterCube");
 		}
 
 		manager = lumbergh.GetComponent<Lumbergh>();
 	}
 
 	void Start(){
-		manager.currentCube = gameObject;
+		cubeIsActive = true;
 		CheckAvailablePositions();
 		PruneLowHangingFruit();
 	}
@@ -74,7 +79,7 @@ public class CubeBase : MonoBehaviour {
 
 
 	void MoveIndicator(){
-		if(manager.playing && Time.time >  manager.lastIndicatorMoveTime + manager.indicatorMoveDelay){
+		if(cubeIsActive && Time.time >  manager.lastIndicatorMoveTime + manager.indicatorMoveDelay && mountPoints.Length > 0){
 			currentMount = GetNewMount(currentMount);
 			manager.indicator.transform.position = mountPoints[currentMount].transform.position;
 			manager.indicator.transform.parent = mountPoints[currentMount].transform;

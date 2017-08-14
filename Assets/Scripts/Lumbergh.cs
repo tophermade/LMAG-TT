@@ -15,6 +15,8 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject mainCam;
 	public GameObject indicator;
 	public GameObject detector;
+	public GameObject cubeParent;
+
 
 	[Header ("Instantiated Object References")]
 	public GameObject currentCube;
@@ -67,6 +69,47 @@ public class Lumbergh : MonoBehaviour {
 		}
 	}
 
+	void EndRound(){
+		if(playing){
+			Debug.Log("Round being ended");
+			playing = false;
+			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
+			indicator.SetActive(false);
+			ManageCanvas("GameOver");
+
+			indicator.transform.parent = baseCube.transform;
+			indicator.transform.position = new Vector3(0,1.2f,0);
+
+			foreach(Transform cube in cubeParent.transform){
+				Destroy(cube.gameObject);
+			}
+		}
+	}
+
+	void PrepareForNewRound(){
+		currentCube = baseCube;
+		currentCube.GetComponent<CubeBase>().cubeIsActive = true;
+		currentCube.transform.rotation = Quaternion.identity;
+		currentCube.transform.position = new Vector3(0,0,0);
+	}
+
+	void StartNewRound(){
+		playing = true;
+		indicator.SetActive(true);
+	}
+
+	void PlaceNewCube(){
+		Debug.Log("Placing new cube");
+		currentCube.GetComponent<CubeBase>().cubeIsActive = false;
+		lastIndicatorMoveTime = 0;
+
+		GameObject newCube = Instantiate(cubes[0], indicator.transform.position, Quaternion.identity);
+		newCube.transform.parent = cubeParent.transform;
+		newCube.transform.rotation = baseCube.transform.rotation;
+		currentCube = newCube;
+	}
+	
+
 
 	/// 
 	/// Called by button presses
@@ -77,14 +120,21 @@ public class Lumbergh : MonoBehaviour {
 		ManageCanvas("Play");
 	}
 
-	public void StartNewRound(){
-		Debug.Log("Starting new round...");
-	}
 
 	public void RequestPlaceCube(){
 		Debug.Log("Requsting cube to be placed");
+		if(playing){
+			PlaceNewCube();
+		}
 	}
 
+
+	public void RequestRestart(){
+		Debug.Log("Requesting a new round");
+		PrepareForNewRound();
+		StartNewRound();
+		ManageCanvas("Play");
+	}
 
 
 	void Update(){
