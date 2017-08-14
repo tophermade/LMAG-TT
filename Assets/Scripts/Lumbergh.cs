@@ -16,10 +16,8 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject indicator;
 	public GameObject detector;
 	public GameObject cubeParent;
+	public AudioSource audioSource;
 
-
-	[Header ("Instantiated Object References")]
-	public GameObject currentCube;
 
 	[Header ("UI Object References")]
 	public GameObject[] scenePanels;
@@ -27,6 +25,15 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject playPanel;
 	public GameObject gameOverPanel;
 	public GameObject shopPanel;
+
+
+	[Header ("Audio Clips")]
+	public AudioClip placeblock;
+	public AudioClip clickButton;
+
+
+	[Header ("Instantiated Object References")]
+	public GameObject currentCube;
 
 
 	[Header ("Booleans")]
@@ -41,9 +48,21 @@ public class Lumbergh : MonoBehaviour {
 	public float indicatorMoveDelay = .75f;
 	public float lastIndicatorMoveTime = 0f;
 
+	[Header ("Strings")]
+	public string activePanelName = "MainMenu";
+	public string lastActivePanelName;
+
 
 	void Start(){
 
+	}
+
+	void ShowShop(){
+		ManageCanvas("Shop");
+	}
+
+	void HideShop(){
+		ManageCanvas(lastActivePanelName);
 	}
 
 	void UpdateCameraPosition(){
@@ -60,6 +79,9 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 	void ManageCanvas(string makeActive){
+		lastActivePanelName = activePanelName;
+		activePanelName = makeActive;
+		
 		foreach(GameObject panel in scenePanels){
 			if(panel.transform.name != makeActive){
 				panel.SetActive(false);
@@ -69,20 +91,39 @@ public class Lumbergh : MonoBehaviour {
 		}
 	}
 
+	IEnumerator ManageCanvasWithDelay(string makeActive, float delay){
+		yield return new WaitForSeconds(delay);
+		lastActivePanelName = activePanelName;
+		activePanelName = makeActive;
+
+		foreach(GameObject panel in scenePanels){
+			if(panel.transform.name != makeActive){
+				panel.SetActive(false);
+			} else {
+				panel.SetActive(true);
+			}
+		}
+	}
+
+	IEnumerator RemoveAddedCubes(){
+		yield return new WaitForSeconds(1.25f);
+		foreach(Transform cube in cubeParent.transform){
+			Destroy(cube.gameObject);
+		}
+		baseCube.SetActive(false);
+	}
+
 	void EndRound(){
 		if(playing){
 			Debug.Log("Round being ended");
 			playing = false;
 			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 			indicator.SetActive(false);
-			ManageCanvas("GameOver");
+			StartCoroutine(ManageCanvasWithDelay("GameOver", 1.25f));
+			StartCoroutine(RemoveAddedCubes());
 
 			indicator.transform.parent = baseCube.transform;
 			indicator.transform.position = new Vector3(0,1.2f,0);
-
-			foreach(Transform cube in cubeParent.transform){
-				Destroy(cube.gameObject);
-			}
 		}
 	}
 
@@ -91,6 +132,7 @@ public class Lumbergh : MonoBehaviour {
 		currentCube.GetComponent<CubeBase>().cubeIsActive = true;
 		currentCube.transform.rotation = Quaternion.identity;
 		currentCube.transform.position = new Vector3(0,0,0);
+		currentCube.SetActive(true);
 	}
 
 	void StartNewRound(){
@@ -100,6 +142,9 @@ public class Lumbergh : MonoBehaviour {
 
 	void PlaceNewCube(){
 		Debug.Log("Placing new cube");
+		
+		audioSource.PlayOneShot(placeblock, .6f);
+
 		currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 		lastIndicatorMoveTime = 0;
 
@@ -107,6 +152,10 @@ public class Lumbergh : MonoBehaviour {
 		newCube.transform.parent = cubeParent.transform;
 		newCube.transform.rotation = baseCube.transform.rotation;
 		currentCube = newCube;
+
+		Vector3 tempVector = trackerVector;
+		tempVector.y = currentCube.transform.position.y + 2.5f;
+		trackerVector = tempVector;
 	}
 	
 
@@ -137,9 +186,13 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 
+	public void PlayButtonSound(){
+		audioSource.PlayOneShot(clickButton, 1f);
+	}
+
 	void Update(){
 		UpdateCameraPosition();
 	}
-
+	
 
 }
