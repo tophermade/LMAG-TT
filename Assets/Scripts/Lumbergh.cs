@@ -62,6 +62,7 @@ public class Lumbergh : MonoBehaviour {
 	public int score = 0;
 	public int coins;
 	public int stackStreak = 0;
+	public int roundcount = 0;
 
 
 	[Header ("Floats")]
@@ -167,6 +168,11 @@ public class Lumbergh : MonoBehaviour {
 
 			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 			indicator.SetActive(false);
+
+			if(roundcount == 0){
+				BroadcastMessage("ShowInterstertial");
+			}
+
 			StartCoroutine(ManageCanvasWithDelay("GameOver", 1.25f));
 			StartCoroutine(RemoveAddedCubes());
 
@@ -247,6 +253,10 @@ public class Lumbergh : MonoBehaviour {
 		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D3");
 		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
 		PlayerPrefs.SetInt("coins", coins);
+	}
+
+	void ApplyReward(){
+		IncreaseCoins(50);
 	}
 
 	void CheckForBonus(){
