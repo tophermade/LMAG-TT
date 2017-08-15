@@ -79,7 +79,7 @@ public class CubeBase : MonoBehaviour {
 
 
 	void MoveIndicator(){
-		if(cubeIsActive && Time.time >  manager.lastIndicatorMoveTime + manager.indicatorMoveDelay && mountPoints.Length > 0){
+		if(cubeIsActive && Time.time >  manager.lastIndicatorMoveTime + (manager.indicatorMoveDelay - manager.indicatorMoveDelayModifier) && mountPoints.Length > 0){
 			currentMount = GetNewMount(currentMount);
 			manager.indicator.transform.position = mountPoints[currentMount].transform.position;
 			manager.indicator.transform.parent = mountPoints[currentMount].transform;

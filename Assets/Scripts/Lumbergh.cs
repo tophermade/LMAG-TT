@@ -67,6 +67,7 @@ public class Lumbergh : MonoBehaviour {
 	[Header ("Floats")]
 	public float indicatorMoveDelay = .75f;
 	public float lastIndicatorMoveTime = 0f;
+	public float indicatorMoveDelayModifier = 0;
 	
 
 	[Header ("Strings")]
@@ -161,6 +162,9 @@ public class Lumbergh : MonoBehaviour {
 		if(playing){
 			Debug.Log("Round being ended");
 			playing = false;
+			stackStreak = 0;
+			indicatorMoveDelayModifier = 0;
+
 			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 			indicator.SetActive(false);
 			StartCoroutine(ManageCanvasWithDelay("GameOver", 1.25f));
@@ -207,6 +211,11 @@ public class Lumbergh : MonoBehaviour {
 			stackStreak++;
 		} else {
 			stackStreak = 0;
+		}
+
+		indicatorMoveDelayModifier = indicatorMoveDelayModifier + .0175f;
+		if(indicatorMoveDelayModifier < .15f){
+			indicatorMoveDelayModifier = .15f;
 		}
 
 		IncreaseScore(1);
