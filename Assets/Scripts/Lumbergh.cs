@@ -17,6 +17,9 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject indicator;
 	public GameObject detector;
 	public GameObject cubeParent;
+
+
+	[Header ("Component References")]
 	public AudioSource audioSource;
 
 
@@ -40,6 +43,7 @@ public class Lumbergh : MonoBehaviour {
 	[Header ("Audio Clips")]
 	public AudioClip placeblock;
 	public AudioClip clickButton;
+	public AudioClip bonusSound;
 
 
 	[Header ("Instantiated Object References")]
@@ -89,6 +93,7 @@ public class Lumbergh : MonoBehaviour {
 		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
 		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
 	}
+	
 
 	void ShowShop(){
 		ManageCanvas("Shop");
@@ -146,6 +151,11 @@ public class Lumbergh : MonoBehaviour {
 		baseCube.SetActive(false);
 	}
 
+	IEnumerator DisableAfterTime(GameObject disableThis, float afterTime){
+		yield return new WaitForSeconds(.6f);
+		disableThis.SetActive(false);
+	}
+
 	void EndRound(){
 		if(playing){
 			Debug.Log("Round being ended");
@@ -191,6 +201,7 @@ public class Lumbergh : MonoBehaviour {
 		trackerVector = tempVector;
 		IncreaseScore(1);
 		IncreaseCoins(1);
+		CheckForBonus();
 	}
 	
 	void IncreaseScore(int addAmount){
@@ -217,6 +228,12 @@ public class Lumbergh : MonoBehaviour {
 		buttonCoinDisplay.GetComponent<Text>().text = coins.ToString("D3");
 		shopCoinDisplay.GetComponent<Text>().text = coins.ToString("D4");
 		PlayerPrefs.SetInt("coins", coins);
+	}
+
+	void CheckForBonus(){
+		bonusImage.SetActive(true);
+		StartCoroutine(DisableAfterTime(bonusImage, .4f));
+		audioSource.PlayOneShot(bonusSound, .5f);
 	}
 
 	public void MakePurchase(GameObject buyButton){
