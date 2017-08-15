@@ -22,10 +22,12 @@ public class Lumbergh : MonoBehaviour {
 
 	[Header ("UI Object References")]
 	public GameObject[] scenePanels;
-	public GameObject mainPanel;
-	public GameObject playPanel;
-	public GameObject gameOverPanel;
-	public GameObject shopPanel;
+	public GameObject bonusImage;
+	public GameObject bonusImageCount;
+	public Sprite bonusOf5Sprite;
+	public Sprite bonusOf10Sprite;
+	public Sprite bonusOf20Sprite;
+	public Sprite bonusOf50Sprite;
 
 
 	[Header ("UI Text References")]
