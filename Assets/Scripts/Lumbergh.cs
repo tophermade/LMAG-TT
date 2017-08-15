@@ -61,6 +61,7 @@ public class Lumbergh : MonoBehaviour {
 	[Header ("Integers")]
 	public int score = 0;
 	public int coins;
+	public int stackStreak = 0;
 
 
 	[Header ("Floats")]
@@ -186,6 +187,8 @@ public class Lumbergh : MonoBehaviour {
 
 	void PlaceNewCube(){
 		Debug.Log("Placing new cube");
+		float tempY = currentCube.transform.position.y + .4f;
+
 		audioSource.PlayOneShot(placeblock, .6f);
 
 		currentCube.GetComponent<CubeBase>().cubeIsActive = false;
@@ -199,6 +202,13 @@ public class Lumbergh : MonoBehaviour {
 		Vector3 tempVector = trackerVector;
 		tempVector.y = currentCube.transform.position.y + 2.5f;
 		trackerVector = tempVector;
+
+		if(currentCube.transform.position.y > tempY){
+			stackStreak++;
+		} else {
+			stackStreak = 0;
+		}
+
 		IncreaseScore(1);
 		IncreaseCoins(1);
 		CheckForBonus();
@@ -231,9 +241,32 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 	void CheckForBonus(){
-		bonusImage.SetActive(true);
-		StartCoroutine(DisableAfterTime(bonusImage, .4f));
-		audioSource.PlayOneShot(bonusSound, .5f);
+		bool awardStreak = false;
+		Sprite awardSprite = bonusOf5Sprite;
+
+		if(stackStreak  == 2){
+			awardStreak = true;
+			IncreaseCoins(5);
+		} else if(stackStreak  == 7){
+			awardStreak = true;
+			awardSprite = bonusOf10Sprite;
+			IncreaseCoins(10);
+		} if(stackStreak  == 15){
+			awardStreak = true;
+			awardSprite = bonusOf20Sprite;
+			IncreaseCoins(20);
+		} if(stackStreak  == 30){
+			awardStreak = true;
+			awardSprite = bonusOf50Sprite;
+			IncreaseCoins(50);
+		}
+
+		if(awardStreak){
+			bonusImage.SetActive(true);
+			bonusImageCount.GetComponent<Image>().sprite = awardSprite;
+			StartCoroutine(DisableAfterTime(bonusImage, .4f));
+			audioSource.PlayOneShot(bonusSound, .5f);
+		}
 	}
 
 	public void MakePurchase(GameObject buyButton){
