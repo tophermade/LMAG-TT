@@ -213,7 +213,7 @@ public class Lumbergh : MonoBehaviour {
 			stackStreak = 0;
 		}
 
-		indicatorMoveDelayModifier = indicatorMoveDelayModifier + .0175f;
+		indicatorMoveDelayModifier = indicatorMoveDelayModifier + .018f;
 		if(indicatorMoveDelayModifier < .15f){
 			indicatorMoveDelayModifier = .15f;
 		}
