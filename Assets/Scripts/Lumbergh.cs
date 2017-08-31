@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
@@ -8,6 +9,7 @@ public class Lumbergh : MonoBehaviour {
 
 	[Header ("Prefab References")]
 	public GameObject[] cubes;
+	public GameObject[] availableCubes;
 
 
 	[Header ("Scene Object References")]
@@ -78,6 +80,7 @@ public class Lumbergh : MonoBehaviour {
 
 	void Start(){
 		EstablishCoinCount();
+		EstablishAvailableCubes();
 	}
 
 	void EstablishCoinCount(){
@@ -181,12 +184,32 @@ public class Lumbergh : MonoBehaviour {
 		}
 	}
 
+	void EstablishAvailableCubes(){
+		GameObject[] tempAvailableCubes = new GameObject[cubes.Length];
+		int tempCount = 0;
+
+		tempAvailableCubes[tempCount] = cubes[0];
+		tempCount++;
+
+		foreach(GameObject singlecube in cubes){
+			if(PlayerPrefs.GetInt(singlecube.name) == 1){
+				tempAvailableCubes[tempCount] = singlecube;
+				tempCount++;
+			}
+		}
+
+		Array.Resize(ref tempAvailableCubes, tempCount);
+		availableCubes = tempAvailableCubes;
+	}
+
 	void PrepareForNewRound(){
 		currentCube = baseCube;
 		currentCube.GetComponent<CubeBase>().cubeIsActive = true;
 		currentCube.transform.rotation = Quaternion.identity;
 		currentCube.transform.position = new Vector3(0,0,0);
 		currentCube.SetActive(true);
+
+		EstablishAvailableCubes();
 	}
 
 	void StartNewRound(){
@@ -204,7 +227,7 @@ public class Lumbergh : MonoBehaviour {
 		currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 		lastIndicatorMoveTime = 0;
 
-		GameObject newCube = Instantiate(cubes[0], indicator.transform.position, Quaternion.identity);
+		GameObject newCube = Instantiate(availableCubes[UnityEngine.Random.Range(0, availableCubes.Length)], indicator.transform.position, Quaternion.identity);
 		newCube.transform.parent = cubeParent.transform;
 		newCube.transform.rotation = baseCube.transform.rotation;
 		currentCube = newCube;
@@ -292,9 +315,10 @@ public class Lumbergh : MonoBehaviour {
 		BuyButton buyingFrom = buyButton.GetComponent<BuyButton>();
 		if(coins >= buyingFrom.itemCost){
 			SpendCoins(buyingFrom.itemCost);
-			PlayerPrefs.SetInt(buyingFrom.itemName, 1);
+			PlayerPrefs.SetInt(buyingFrom.unlockThisBlock.name, 1);
 			buyingFrom.Unlock();
 		}
+		EstablishAvailableCubes();
 	}
 	
 
@@ -328,6 +352,14 @@ public class Lumbergh : MonoBehaviour {
 	public void PlayButtonSound(){
 		audioSource.PlayOneShot(clickButton, 1f);
 	}
+
+
+	public void ExitButton(){
+		Application.Quit();
+	}
+
+
+
 
 	void Update(){
 		UpdateCameraPosition();

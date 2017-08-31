@@ -5,8 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class BuyButton : MonoBehaviour {
+	public Button button;
 	public GameObject lumbergh;
 	public GameObject text;
+	public GameObject unlockThisBlock;
 	public string itemName;
 	public int itemCost;
 	public bool isUnlocked;
@@ -14,7 +16,11 @@ public class BuyButton : MonoBehaviour {
 
 
 	void Start(){
+		button = gameObject.GetComponent<Button>();
+        button.onClick.AddListener(OnButtonClick);
+
 		lumbergh = GameObject.Find("Lumbergh");
+		itemName = unlockThisBlock.name;
 		if(PlayerPrefs.GetInt(itemName) == 1){
 			Unlock();
 		}
