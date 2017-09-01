@@ -29,6 +29,7 @@ public class Lumbergh : MonoBehaviour {
 	public GameObject[] scenePanels;
 	public GameObject bonusImage;
 	public GameObject bonusImageCount;
+	public GameObject playRewardButton;
 	public Sprite bonusOf5Sprite;
 	public Sprite bonusOf10Sprite;
 	public Sprite bonusOf20Sprite;
@@ -172,8 +173,13 @@ public class Lumbergh : MonoBehaviour {
 			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 			indicator.SetActive(false);
 
-			if(roundcount == 0){
+			if(roundcount == 4){
 				BroadcastMessage("ShowInterstertial");
+				roundcount = 0;
+			}
+
+			if(UnityEngine.Random.Range(0, 9) == 4){
+				playRewardButton.SetActive(true);			
 			}
 
 			StartCoroutine(ManageCanvasWithDelay("GameOver", 1.25f));
@@ -182,6 +188,10 @@ public class Lumbergh : MonoBehaviour {
 			indicator.transform.parent = baseCube.transform;
 			indicator.transform.position = new Vector3(0,1.2f,0);
 		}
+	}
+
+	void ShowRewarded(){
+		playRewardButton.SetActive(false);
 	}
 
 	void EstablishAvailableCubes(){

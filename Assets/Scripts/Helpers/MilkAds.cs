@@ -41,7 +41,7 @@ public class MilkAds : MonoBehaviour,IInterstitialAdListener,IRewardedVideoAdLis
 		Appodeal.show(Appodeal.INTERSTITIAL);
 	}
 
-	void ShowRewarded(){
+	public void ShowRewarded(){
 		Appodeal.show(Appodeal.REWARDED_VIDEO);
 	}
 
