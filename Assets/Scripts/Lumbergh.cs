@@ -44,9 +44,11 @@ public class Lumbergh : MonoBehaviour {
 
 
 	[Header ("Audio Clips")]
+	public AudioClip backgroundAudio;
 	public AudioClip placeblock;
 	public AudioClip clickButton;
 	public AudioClip bonusSound;
+	public AudioClip failSound;
 
 
 	[Header ("Instantiated Object References")]
@@ -80,6 +82,8 @@ public class Lumbergh : MonoBehaviour {
 
 
 	void Start(){
+		audioSource.clip = backgroundAudio;
+		audioSource.Play();
 		EstablishCoinCount();
 		EstablishAvailableCubes();
 	}
@@ -166,16 +170,18 @@ public class Lumbergh : MonoBehaviour {
 	void EndRound(){
 		if(playing){
 			Debug.Log("Round being ended");
+			roundcount++;
 			playing = false;
 			stackStreak = 0;
 			indicatorMoveDelayModifier = 0;
+			audioSource.PlayOneShot(failSound, .9f);
 
 			currentCube.GetComponent<CubeBase>().cubeIsActive = false;
 			indicator.SetActive(false);
 
 			if(roundcount == 4){
-				BroadcastMessage("ShowInterstertial");
 				roundcount = 0;
+				BroadcastMessage("ShowInterstertial");
 			}
 
 			if(UnityEngine.Random.Range(0, 9) == 4){
@@ -289,6 +295,7 @@ public class Lumbergh : MonoBehaviour {
 	}
 
 	void ApplyReward(){
+		playRewardButton.SetActive(false);
 		IncreaseCoins(50);
 	}
 

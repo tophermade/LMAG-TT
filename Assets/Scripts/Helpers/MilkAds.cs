@@ -38,10 +38,12 @@ public class MilkAds : MonoBehaviour,IInterstitialAdListener,IRewardedVideoAdLis
 	}
 
 	void ShowInterstertial(){
+		Debug.Log("Attempting show itnerstertial");
 		Appodeal.show(Appodeal.INTERSTITIAL);
 	}
 
 	public void ShowRewarded(){
+		Debug.Log("Attempting show rewarded");
 		Appodeal.show(Appodeal.REWARDED_VIDEO);
 	}
 
